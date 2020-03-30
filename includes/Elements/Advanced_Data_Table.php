@@ -22,17 +22,45 @@ class Advanced_Data_Table extends Widget_Base
 
     public function get_title()
     {
-        return esc_html__('EA Advanced Data Table', 'essential-addons-for-elementor-lite');
+        return esc_html__('Advanced Data Table', 'essential-addons-for-elementor-lite');
     }
 
     public function get_icon()
     {
-        return 'eicon-table';
+        return 'eaicon-advanced-data-table';
     }
 
     public function get_categories()
     {
         return ['essential-addons-elementor'];
+    }
+
+    public function get_keywords()
+    {
+        return [
+            'table',
+            'ea table',
+            'ea advanced table',
+            'ea advanced data table',
+            'CSV',
+            'google sheet',
+            'spreadsheet',
+            'excel',
+            'tablepress',
+            'ninja tables',
+            'data dable',
+            'comparison table',
+            'grid',
+            'import data',
+            'import table',
+            'ea',
+            'essential addons'
+        ];
+    }
+
+    public function get_custom_help_url()
+    {
+        return 'https://essential-addons.com/elementor/docs/advanced-data-table/';
     }
 
     protected function _register_controls()
@@ -50,9 +78,26 @@ class Advanced_Data_Table extends Widget_Base
             [
                 'label' => esc_html__('Source', 'essential-addons-for-elementor-lite'),
                 'type' => Controls_Manager::SELECT,
-                'options' => apply_filters('eael/advanced-data-table/source', [
-                    'static' => __('Static Data', 'essential-addons-for-elementor-lite'),
-                ]),
+                'options' => call_user_func(function () {
+                    $source = [];
+                    $source['static'] = __('Static Data', 'essential-addons-for-elementor-lite');
+
+                    if (apply_filters('eael/pro_enabled', false)) {
+                        $source['database'] = __('Database', 'essential-addons-for-elementor-lite');
+                        $source['remote'] = __('Remote Database', 'essential-addons-for-elementor-lite');
+                        $source['google'] = __('Google Sheets', 'essential-addons-for-elementor-lite');
+                        $source['tablepress'] = __('TablePress', 'essential-addons-for-elementor-lite');
+                    } else {
+                        $source['database'] = __('Database(PRO)', 'essential-addons-for-elementor-lite');
+                        $source['remote'] = __('Remote Database(PRO)', 'essential-addons-for-elementor-lite');
+                        $source['google'] = __('Google Sheets(PRO)', 'essential-addons-for-elementor-lite');
+                        $source['tablepress'] = __('TablePress(PRO)', 'essential-addons-for-elementor-lite');
+                    }
+
+                    $source['ninja'] = __('Ninja Tables', 'essential-addons-for-elementor-lite');
+
+                    return $source;
+                }),
                 'default' => 'static',
             ]
         );
@@ -1420,6 +1465,24 @@ class Advanced_Data_Table extends Widget_Base
     {
         $settings = $this->get_settings_for_display();
 
+        if (in_array($settings['ea_adv_data_table_source'], ['database', 'remote', 'google'])) {
+            if (!apply_filters('eael/pro_enabled', false)) {
+                return;
+            }
+        } else if ($settings['ea_adv_data_table_source'] == "tablepress") {
+            if (!apply_filters('eael/pro_enabled', false)) {
+                return;
+            }
+
+            if (!apply_filters('eael/active_plugins', 'tablepress/tablepress.php')) {
+                return;
+            }
+        } else if ($settings['ea_adv_data_table_source'] == "ninja") {
+            if (!apply_filters('eael/active_plugins', 'ninja-tables/ninja-tables.php')) {
+                return;
+            }
+        }
+
         $this->add_render_attribute('ea-adv-data-table-wrap', [
             'class' => "ea-advanced-data-table-wrap",
             'data-id' => $this->get_id(),
@@ -1461,47 +1524,55 @@ class Advanced_Data_Table extends Widget_Base
 
         echo '<div ' . $this->get_render_attribute_string('ea-adv-data-table-wrap') . '>';
 
-        if ($settings['ea_adv_data_table_search'] == 'yes') {
-            echo '<div ' . $this->get_render_attribute_string('ea-adv-data-table-search-wrap') . '><input type="search" placeholder="' . $settings['ea_adv_data_table_search_placeholder'] . '" class="ea-advanced-data-table-search"></div>';
-        }
-
-        echo '<div class="ea-advanced-data-table-wrap-inner">
-            <table ' . $this->get_render_attribute_string('ea-adv-data-table') . '>' . $this->html_static_table() . '</table>
-        </div>';
-
-        if ($settings['ea_adv_data_table_pagination'] == 'yes') {
-            if (Plugin::$instance->editor->is_edit_mode()) {
-                if ($settings['ea_adv_data_table_pagination_type'] == 'button') {
-                    echo '<div class="ea-advanced-data-table-pagination clearfix">
-                        <a href="#">&laquo;</a>
-                        <a href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">&raquo;</a>
-                    </div>';
-                } else {
-                    echo '<div class="ea-advanced-data-table-pagination clearfix">
-                        <select>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                        </select>
-                    </div>';
-                }
-            } else {
-                echo '<div class="ea-advanced-data-table-pagination ea-advanced-data-table-pagination-' . $settings['ea_adv_data_table_pagination_type'] . ' clearfix"></div>';
+        if($table_html = $this->table_html()) {
+            if ($settings['ea_adv_data_table_search'] == 'yes') {
+                echo '<div ' . $this->get_render_attribute_string('ea-adv-data-table-search-wrap') . '><input type="search" placeholder="' . $settings['ea_adv_data_table_search_placeholder'] . '" class="ea-advanced-data-table-search"></div>';
             }
+    
+            echo '<div class="ea-advanced-data-table-wrap-inner">
+                <table ' . $this->get_render_attribute_string('ea-adv-data-table') . '>' . $this->table_html() . '</table>
+            </div>';
+    
+            if ($settings['ea_adv_data_table_pagination'] == 'yes') {
+                if (Plugin::$instance->editor->is_edit_mode()) {
+                    if ($settings['ea_adv_data_table_pagination_type'] == 'button') {
+                        echo '<div class="ea-advanced-data-table-pagination clearfix">
+                            <a href="#">&laquo;</a>
+                            <a href="#">1</a>
+                            <a href="#">2</a>
+                            <a href="#">&raquo;</a>
+                        </div>';
+                    } else {
+                        echo '<div class="ea-advanced-data-table-pagination clearfix">
+                            <select>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>';
+                    }
+                } else {
+                    echo '<div class="ea-advanced-data-table-pagination ea-advanced-data-table-pagination-' . $settings['ea_adv_data_table_pagination_type'] . ' clearfix"></div>';
+                }
+            }
+        } else {
+            _e('No content found', 'essential-addons-for-elementor-lite');
         }
 
         echo '</div>';
     }
 
-    protected function html_static_table()
+    protected function table_html()
     {
         $settings = $this->get_parsed_dynamic_settings();
 
-        if ($settings['ea_adv_data_table_source'] == 'database' || $settings['ea_adv_data_table_source'] == 'remote' || $settings['ea_adv_data_table_source'] == 'google' || $settings['ea_adv_data_table_source'] == 'tablepress') {
-            return apply_filters('eael/advanced-data-table/table_html/database', $settings, '');
+        if (in_array($settings['ea_adv_data_table_source'], ['database', 'remote'])) {
+            return apply_filters('eael/advanced-data-table/table_html/database', $settings);
+        } else if ($settings['ea_adv_data_table_source'] == 'google') {
+            return apply_filters('eael/advanced-data-table/table_html/integration/google_sheets', $settings);
+        } else if ($settings['ea_adv_data_table_source'] == 'tablepress') {
+            return apply_filters('eael/advanced-data-table/table_html/integration/tablepress', $settings);
         } else if ($settings['ea_adv_data_table_source'] == 'ninja') {
-            return apply_filters('eael/advanced-data-table/table_html/integration', $settings, '');
+            return apply_filters('eael/advanced-data-table/table_html/integration/ninja', $settings);
         }
 
         return $settings['ea_adv_data_table_static_html'];
