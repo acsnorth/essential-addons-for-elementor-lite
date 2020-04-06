@@ -336,6 +336,23 @@ class Filterable_Gallery extends Widget_Base
         );
 
         $this->add_control(
+            'eael_fg_control_tag',
+            [
+                'label' => __('Select Tag', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'h4',
+                'options' => [
+                    'h1' => __('H1', 'essential-addons-for-elementor-lite'),
+                    'h2' => __('H2', 'essential-addons-for-elementor-lite'),
+                    'h3' => __('H3', 'essential-addons-for-elementor-lite'),
+                    'h4' => __('H4', 'essential-addons-for-elementor-lite'),
+                    'h5' => __('H5', 'essential-addons-for-elementor-lite'),
+                    'h6' => __('H6', 'essential-addons-for-elementor-lite'),
+                ],
+            ]
+        );
+
+        $this->add_control(
             'fg_all_label_icon',
             [
                 'label' => __('All label icon', 'essential-addons-for-elementor-lite'),
@@ -390,6 +407,23 @@ class Filterable_Gallery extends Widget_Base
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
                 'frontend_available' => true,
+            ]
+        );
+
+        $this->add_control(
+            'eael_fg_item_title_tag',
+            [
+                'label' => __('Select Tag', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'h4',
+                'options' => [
+                    'h1' => __('H1', 'essential-addons-for-elementor-lite'),
+                    'h2' => __('H2', 'essential-addons-for-elementor-lite'),
+                    'h3' => __('H3', 'essential-addons-for-elementor-lite'),
+                    'h4' => __('H4', 'essential-addons-for-elementor-lite'),
+                    'h5' => __('H5', 'essential-addons-for-elementor-lite'),
+                    'h6' => __('H6', 'essential-addons-for-elementor-lite'),
+                ],
             ]
         );
 
@@ -907,7 +941,7 @@ class Filterable_Gallery extends Widget_Base
             Group_Control_Typography::get_type(),
             [
                 'name' => 'eael_fg_control_typography',
-                'selector' => '{{WRAPPER}} .eael-filter-gallery-control ul li.control',
+                'selector' => '{{WRAPPER}} .eael-filter-gallery-control ul li.control h1, {{WRAPPER}} .eael-filter-gallery-control ul li.control h2, {{WRAPPER}} .eael-filter-gallery-control ul li.control h3, {{WRAPPER}} .eael-filter-gallery-control ul li.control h4, {{WRAPPER}} .eael-filter-gallery-control ul li.control h5, {{WRAPPER}} .eael-filter-gallery-control ul li.control h6',
             ]
         );
         // Tabs
@@ -923,7 +957,12 @@ class Filterable_Gallery extends Widget_Base
                 'type' => Controls_Manager::COLOR,
                 'default' => '#444',
                 'selectors' => [
-                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h1' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h2' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h3' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h4' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h5' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.control h6' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -989,7 +1028,12 @@ class Filterable_Gallery extends Widget_Base
                 'type' => Controls_Manager::COLOR,
                 'default' => '#fff',
                 'selectors' => [
-                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h1' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h2' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h3' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h4' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h5' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .eael-filter-gallery-control ul li.active h6' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -2724,12 +2768,12 @@ class Filterable_Gallery extends Widget_Base
 			<div class="eael-filter-gallery-control">
 				<ul>
 					<?php if ($settings['eael_fg_all_label_text']) {?>
-						<li class="control all-control active" data-filter="*"><?php echo $all_text; ?></li>
+						<li class="control all-control active" data-filter="*"><<?php echo esc_html($settings['eael_fg_control_tag']); ?>><?php echo $all_text; ?></<?php echo esc_html($settings['eael_fg_control_tag']); ?>></li>
 					<?php } ?>
 
 					<?php foreach ($settings['eael_fg_controls'] as $key => $control):
                         $sorter_filter = $this->sorter_class($control['eael_fg_control']);?>
-						<li class="control <?php if ($key == 0 && empty($settings['eael_fg_all_label_text'])) {echo 'active';}?>" data-filter=".eael-cf-<?php echo esc_attr($sorter_filter); ?>"><?php echo esc_html__($control['eael_fg_control']); ?></li>
+						<li class="control <?php if ($key == 0 && empty($settings['eael_fg_all_label_text'])) {echo 'active';}?>" data-filter=".eael-cf-<?php echo esc_attr($sorter_filter); ?>"><<?php echo esc_html($settings['eael_fg_control_tag']); ?>><?php echo esc_html__($control['eael_fg_control']); ?></<?php echo esc_html($settings['eael_fg_control_tag']); ?>></li>
 					<?php endforeach;?>
 				</ul>
 			</div>
@@ -3010,7 +3054,8 @@ class Filterable_Gallery extends Widget_Base
                             $html .= '<div class="fg-item-category"><span>'.$item['category'].'</span></div>';
                         }
 
-                        $html .= '<h5 class="fg-item-title">' . $item['title'] . '</h5>';
+                        $html .= '<' . $settings['eael_fg_item_title_tag'] . ' class="fg-item-title">' . $item['title']; 
+                        $html .= '</' . $settings['eael_fg_item_title_tag'] . '>';
                         $html .= '<div class="fg-item-content">' . wpautop($item['content']) . '</div>';
                     $html .= '</div>';
 
@@ -3116,7 +3161,8 @@ class Filterable_Gallery extends Widget_Base
                                 $html .= '<div class="gallery-item-caption-over">';
                                     if (isset($item['title']) && !empty($item['title']) || isset($item['content']) && !empty($item['content'])) {
                                         if (!empty($item['title'])) {
-                                            $html .= '<h5 class="fg-item-title">' . $item['title'] . '</h5>';
+                                            $html .= '<' . $settings['eael_fg_item_title_tag'] . ' class="fg-item-title">' . $item['title']; 
+                                            $html .= '</' . $settings['eael_fg_item_title_tag'] . '>';
                                         }
                                         if (!empty($item['content'])) {
                                             $html .= '<div class="fg-item-content">' . wpautop($item['content']) . '</div>';

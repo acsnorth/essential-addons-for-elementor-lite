@@ -329,7 +329,7 @@ a.eael-gallery-load-more, a.eael-gallery-load-more:hover {
 
 /*--- Gallery Card Style CSS ---*/
 .gallery-item-caption-wrap.caption-style-card .fg-item-title {
-  font-size: 18px;
+  /*font-size: 18px;*/
   margin: 15px 0 15px;
   line-height: 1;
 }
@@ -836,7 +836,7 @@ a.eael-gallery-load-more, a.eael-gallery-load-more:hover {
 }
 
 .fg-layout-3-item-content .fg-item-title {
-  font-size: 18px;
+  /*font-size: 18px;*/
   line-height: 1;
   font-weight: 500;
   margin: 0;
