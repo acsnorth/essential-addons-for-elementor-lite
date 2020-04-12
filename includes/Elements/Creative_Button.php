@@ -298,21 +298,15 @@ class Creative_Button extends Widget_Base {
 					'selector' => '{{WRAPPER}} .eael-creative-button',
 				]
 			);
-			
+
 			$this->add_control(
 				'eael_creative_button_border_radius',
 				[
 					'label' => esc_html__( 'Border Radius', 'essential-addons-for-elementor-lite'),
-					'type'  => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'max' => 100,
-						],
-					],
+					'type' 	=> Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px' ],
 					'selectors' => [
-						'{{WRAPPER}} .eael-creative-button'         => 'border-radius: {{SIZE}}px;',
-						'{{WRAPPER}} .eael-creative-button::before' => 'border-radius: {{SIZE}}px;',
-						'{{WRAPPER}} .eael-creative-button::after'  => 'border-radius: {{SIZE}}px;',
+						'{{WRAPPER}} .eael-creative-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					],
 				]
 			);
